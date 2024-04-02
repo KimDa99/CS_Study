@@ -1,6 +1,6 @@
 ---
 name: Daily Report
-about: Describe this issue template's purpose here.
+about: '스터디 탈출 조건: 취업 or 죽음'
 title: 0주차 0일 2024.00.00
 labels: ''
 assignees: KimDa99, ShinYoung-Kim
