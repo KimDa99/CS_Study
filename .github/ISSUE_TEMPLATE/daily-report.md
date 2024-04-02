@@ -3,7 +3,7 @@ name: Daily Report
 about: Describe this issue template's purpose here.
 title: 0주차 0일 2024.00.00
 labels: ''
-assignees: ShinYoung-Kim, KimDa99
+assignees: KimDa99, ShinYoung-Kim
 
 ---
 
@@ -14,8 +14,16 @@ assignees: ShinYoung-Kim, KimDa99
 ## 김다은
 -
 
-## 전효정
+## 박지훈
 - 
 
-## 최승훈
+---
+어제 한 일
+## 김신영
+- 
+
+## 김다은
+- 
+
+## 박지훈
 -
