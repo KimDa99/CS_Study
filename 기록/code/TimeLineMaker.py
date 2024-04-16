@@ -57,41 +57,41 @@ def MakeTimeLine(person = "김다은", dateRange = ["2024년 01월 1주차", "20
     categoires = GetCategories(sheet)
     sheet = lwb[total_sheetName]
     data = GetProcessedData(sheet, categoires, person, dateRange = dateRange)
+    ### Write the data to the excel file ###
+    TimeBlocks = TimeBlock.TimeBlockList(data)
+
 
     # get the weekly review
-    sheet = lwb[categories_sheetName]
-    weeklyDiv = GetCategories(sheet, name="주간점검 분류")
-    weeklyReview = []
-    weeklyInfoName = []
     if doIncludeWeeklyReview:
+        sheet = lwb[categories_sheetName]
+        weeklyDiv = GetCategories(sheet, name="주간점검 분류")
+        weeklyReview = []
+        weeklyInfoName = []
         sheet = lwb[weeklyCheck_sheetName]
         weeklyReview = GetReview(sheet, person, removeCols=[1, -1], monthOnly=False)
         # get first row of the sheet to get the review category
         weeklyInfoName = weeklyReview[0]
+        TimeBlocks.AddReviews(weeklyReview[1:])
+
+    MonthBlocks = TimeBlock.MonthBlockList(TimeBlocks)
 
     # get the monthly review
-    sheet = lwb[categories_sheetName]
-    monthlyInfoName = GetCategories(sheet, name="월점검")
-    monthlyDiv = GetCategories(sheet, name="월점검 분류")
-    monthlyReview = []
-    monthlyCategory = []
-    monthluReviewCategoryCol = ['C', 'D', 'E', 'F']
     if doIncludeMonthlyReview:
+        sheet = lwb[categories_sheetName]
+        monthlyInfoName = GetCategories(sheet, name="월점검")
+        monthlyDiv = GetCategories(sheet, name="월점검 분류")
+        monthlyReview = []
         sheet = lwb[monthlyCheck_sheetName]
         monthlyReview = GetReview(sheet, person, removeCols=[1, -1], monthOnly=True)
-        # get first row of the sheet to get the review category
-        firstRow = sheet[1]
-        for i in range(len(monthluReviewCategoryCol)):
-            # turn in do col char to int
-            colIndex = ord(monthluReviewCategoryCol[i]) - ord('A')
-            monthlyCategory.append(firstRow[colIndex].value)
+        MonthBlocks.AddReviews(monthlyReview[1:])
 
 
+    # print MonthBlocks
+    print(MonthBlocks.MonthBlocks)
+'''
     ### Write the data to the excel file ###
-    TimeBlocks = TimeBlock.TimeBlockList(data, reviews= weeklyReview)
     maxCol = GetMaxCol(TimeBlocks, categoires, weeklyReview, monthlyReview)
     timeLine_colNum = len(categoires) * 2 + 1
-
 
     #create excel file
     lwb = oxl.Workbook()
@@ -165,8 +165,8 @@ def MakeTimeLine(person = "김다은", dateRange = ["2024년 01월 1주차", "20
                     monthReviewCol = 2
                     for j in range(1,len(monthlyReview[i])):
                         colName = "목록"
-                        if len(monthlyCategory) > j-1:
-                            colName = monthlyCategory[j-1]
+                        if len(monthlyInfoName) > j-1:
+                            colName = monthlyInfoName[j-1]
                         if colName in stackable:
                             stack =[]
                         else:
@@ -207,6 +207,7 @@ def MakeTimeLine(person = "김다은", dateRange = ["2024년 01월 1주차", "20
 
     lwb.save(GetFileNames(person, dateRange, doIncludeMonthlyReview, doIncludeWeeklyReview, doFilterByDate))
     return
+'''
 
 def WriteReviews(sheet, reviews, startRow, startCol,  reviewCategory = [], stackable = ['잘한 점', '개선점', '만족도'], unStackable = ['목표', '계획', '성과', '이벤트']):
     endRow = startRow
@@ -445,7 +446,7 @@ def GetCategories(sheet, name = "Category"):
         categories.append(row[0].value)
     return categories
 
-def GetProcessedData(sheet, categories, person, dateRange = None, excludingCols = ["이름", "etc"], categories = None):
+def GetProcessedData(sheet, person, dateRange = None, excludingCols = ["이름", "etc"], categories = None):
     data = GetData(sheet, person, dateRange, excludingCols)
     if categories == None:
         categories = GetCategories(sheet)
